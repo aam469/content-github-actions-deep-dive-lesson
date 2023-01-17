@@ -63,13 +63,13 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: zipped-bundle
-      - name: Upload release asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.github_token }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ github.sha }}.zip
-          asset_name: source_code_with_libraries.zip
-          asset_content_type: application/zip
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrests.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Upload to AWS s3
+        run: aws s3 cp ${{ github.sha }}.zip s3://<YOUR BUCKET NAME HERE>/${{ github.repository }}/${{ github.sha }}.zip
+    
   
